@@ -42,6 +42,7 @@ public final class node {
      
         for(int i=0;i<files.size();i++){
             trainer t=new trainer(readpic((String) files.get(i)));
+            
             testers.add(t);
             
         }
@@ -49,8 +50,15 @@ public final class node {
           Random rand=new Random();
 
          // paterns=read();
-         
-        paterns= read();
+         try {
+        	 if(!read().isEmpty()) {
+                 paterns= read();
+        	 }
+         }
+         catch(NullPointerException e ) {
+        	 paterns=new ArrayList();
+         }
+
         if(!paterns.isEmpty()){
            for(int c=0;c<200;c++){
           patern p1=paterns.get(rand.nextInt(paterns.size()));
@@ -78,7 +86,8 @@ public final class node {
          }
             }
             else {
-                 patern Nimg= new patern(p1.getImage().getWidth(),p1.getImage().getHeight());
+            
+                 patern Nimg= new patern(p1.getImage().getWidth(),p2.getImage().getHeight());
          Nimg.score=scorepatern(Nimg.getImage(),testers);
          min=Nimg;  
                 
@@ -87,7 +96,7 @@ public final class node {
            }        
         }
         else {
-              for(int i=0;i<40;i++){  
+              for(int i=0;i<200;i++){  
                 patern Npat=new patern(25,25);
                 Npat.score=scorepatern(Npat.getImage(),testers);
                paterns.add(Npat);
@@ -228,7 +237,8 @@ public final class node {
     }
     public patern breed(patern p1,patern p2){
         int width=p1.getImage().getWidth();
-        int height=p2.getImage().getHeight();
+        int height=p1.getImage().getHeight();
+      
         Random rand=new Random();
         Boolean side=rand.nextBoolean();
         patern Nimg=new patern(width,height);
@@ -367,6 +377,13 @@ return results;
             is.readFully(buffer);
             p.setImage(ImageIO.read(new ByteArrayInputStream(buffer)));
             p.score=is.readInt();
+            int sc=scorepatern(p.getImage(),this.testers);
+            if(sc<p.score) {
+            	patern m=new patern(p.getImage().getWidth(),p.getImage().getHeight());
+            	m.generateRandom();
+            	m.score=scorepatern(p.getImage(),this.testers);
+            	p=m;
+            }
             temp.add(p);
             }
             
